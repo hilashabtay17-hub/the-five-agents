@@ -25,9 +25,53 @@
 - `skills/` - יכולות (skills) מותאמות שהצוות יכול להפעיל.
 - `commands/` - פקודות (slash commands) מותאמות.
 
+תיקיות עבודה בשורש הפרויקט:
+
+- `Content/` - מאמרי גלם נכנסים (קלט ליעל).
+- `Output/` - תוצרים סופיים: `.md`, `.html` ותת-תיקיות `<article>_assets/` עם תמונות.
+- `yael/` - תיקיית העבודה של יעל: `style-guide.md` + `reference/` (דוגמאות סגנון).
+- `yuval/` - תיקיית העבודה של יובל: `reference/` (תמונות השראה) ו-`outputs/` (תמונות שנוצרו, עם sibling `.txt` ל-prompt).
+
+## ניתוב לסוכנים
+
+**יעל - כותבת התוכן** (`.claude/agents/yael.md`)
+
+Trigger keywords:
+- עברית: שכתב, ערוך, נסח מחדש, תרגם, סכם, מאמר, תוכן, פוסט
+- English: rewrite, edit, rephrase, translate, summarize, article, content, post
+
+הפעל את יעל כש: יש מאמר ב-`Content/` שצריך לשכתב, או כשהמשתמש מבקש פעולת
+כתיבה/עריכה על טקסט קיים. יעל פועלת על קבצים בלבד (Read/Write/Edit/Glob/Grep)
+- אין לה גישה לרשת, ל-Bash או לסוכנים אחרים.
+
+**יובל - מעצב התמונות** (`.claude/agents/yuval.md`)
+
+Trigger keywords:
+- עברית: תמונה של, ציור של, תיצור תמונה, איור, ויזואל
+- English: image of, picture of, generate image, illustration, draw
+
+הפעל את יובל כש: יש בקשה ליצירת תמונה/איור עצמאית, או כשמאמר של יעל מכיל
+`{{IMAGE_NEEDED:...}}` placeholders שצריך למלא. יובל קורא ל-OpenAI Images API
+דרך הסקיל `gpt-image-gen` (מודל `gpt-image-2`) ושומר תמונות ב-`yuval/outputs/`.
+דורש `OPENAI_API_KEY` ב-`.env`.
+
+## Pipeline: מאמר עם תמונות
+
+כשהמשתמש מבקש מאמר עם תמונות (או כשהמאמר ארוך מספיק שזה הגיוני):
+
+1. **הפעל את יעל** לשכתב את המאמר. היא תזהה לבד היכן תמונה תעזור ותשאיר
+   `{{IMAGE_NEEDED: "תיאור..."}}` ב-MD ו-`<!-- IMAGE_NEEDED: "..." -->` ב-HTML.
+2. **קבל מיעל** סיכום + רשימה ממוספרת של ה-placeholders שהשאירה. אם הרשימה ריקה - אין מה לעשות, סיימנו.
+3. **לכל placeholder ברשימה**, הפעל את יובל עם התיאור. יובל יחזיר נתיב לתמונה ב-`yuval/outputs/<date>-<slug>.png`.
+4. **צור תת-תיקייה** `Output/<article-slug>_assets/` והעתק לתוכה את כל התמונות שיובל יצר.
+5. **החלף את ה-placeholders** בקבצים שיעל יצרה ב-`Output/`:
+   - ב-`.md`: `{{IMAGE_NEEDED: "..."}}` → `![<alt קצר מהתיאור>](<article-slug>_assets/<file>.png)`
+   - ב-`.html`: `<!-- IMAGE_NEEDED: "..." -->` → `<img src="<article-slug>_assets/<file>.png" alt="<alt קצר>">`
+6. **תוצאה סופית**: `Output/` נשארת self-contained - HTML + MD + תת-תיקיית assets, ניתן לזיפ ולשלוח בלי תלות בשאר הפרויקט.
+
 ## הערה
 
-זהו קובץ ראשוני. בהמשך נוסיף לכאן:
-- הוראות ניתוב מפורטות (איזו בקשה הולכת לאיזה סוכן).
-- כללי עבודה בין הסוכנים.
+זהו קובץ פעיל. בהמשך נוסיף לכאן:
+- הוראות ניתוב מפורטות עבור חן.
+- כללי עבודה משולבים בין הסוכנים (מעבר ל-Pipeline הקיים).
 - מוסכמות תקשורת ופלטים.
