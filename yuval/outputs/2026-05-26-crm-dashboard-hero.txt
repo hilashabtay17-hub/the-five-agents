@@ -1,0 +1,14 @@
+Image: 2026-05-26-crm-dashboard-hero.png
+Model: gpt-image-2
+Size: 1024x1024
+Quality: medium
+References used: none (yuval/reference/ was empty)
+Generated for: Output/מאמר CRM (hero image)
+
+Prompt:
+Minimalist editorial illustration of a small business owner reviewing a CRM dashboard on a laptop, showing abstract customer cards, deal pipeline columns, and status indicators. Soft pastel color palette with warm purple as the dominant accent color, off-white background, clean flat colors, subtle line work, centered composition, calm professional mood, no visible text or words in the dashboard
+
+Notes:
+- Purple accent chosen to match the article's heading color (#6b3fa0)
+- Explicit "no text" instruction since gpt-image-2 (like most diffusion models) handles text poorly
+- Minimalist style matches the clean editorial tone of the rewritten article
